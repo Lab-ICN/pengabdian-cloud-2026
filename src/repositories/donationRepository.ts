@@ -5,7 +5,7 @@ export const createDonation = async (donationData: {
   amount: number;
   userId: string;
 }) => {
-  await prisma.donation.create({
+  return await prisma.donation.create({
     data: {
       orderId: donationData.orderId,
       amount: donationData.amount,
