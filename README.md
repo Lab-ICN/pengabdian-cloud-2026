@@ -17,7 +17,7 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 - Node.js, Express, TypeScript
 - PostgreSQL, Prisma ORM
 - Passport.js (JWT)
-- Supabase (media storage)
+- Local disk storage (user-uploaded report media)
 - Midtrans (payment gateway)
 - Nodemailer (email service)
 
@@ -28,7 +28,6 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 - Node.js & npm
 - PostgreSQL database
 - [Midtrans](https://midtrans.com/) account
-- [Supabase](https://supabase.com/) project
 
 ### Installation
 
@@ -57,8 +56,6 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
    EMAIL_PASS=your_email_password
    MIDTRANS_SERVER_KEY=your_midtrans_server_key
    MIDTRANS_CLIENT_KEY=your_midtrans_client_key
-   SUPABASE_URL=your_supabase_url
-   SUPABASE_ANON_KEY=your_supabase_anon_key
    RESET_PASSWORD_URL=https://your-frontend/reset-password
    ```
 
