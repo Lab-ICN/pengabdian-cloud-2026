@@ -30,6 +30,7 @@ Prisma 6 is retained for compatibility. A scoped npm override upgrades its `deep
 
 - Node.js 22 LTS (22.13+) or 24+, and npm
 - MySQL 8.0+ database and an application user with access to it
+- Redis running locally (default `127.0.0.1:6379`)
 
 ### Installation
 
@@ -53,6 +54,10 @@ Prisma 6 is retained for compatibility. A scoped npm override upgrades its `deep
    DATABASE_URL="mysql://blue_save:your_password@127.0.0.1:3306/blue_save"
    JWT_SECRET=your_jwt_secret
    JWT_REFRESH_SECRET=your_jwt_refresh_secret
+   REDIS_HOST=127.0.0.1
+   REDIS_PORT=6379
+   REDIS_DB=0
+   REDIS_PASSWORD=
    ```
 
 4. **Create the database and run migrations**
@@ -84,6 +89,20 @@ Prisma 6 is retained for compatibility. A scoped npm override upgrades its `deep
    ```
 
 ## API Endpoints
+
+### Redis
+
+`REDIS_DB` selects the Redis logical database (default `0`); it must exist in your Redis server configuration. Host, port, and optional password are also configurable through the environment. Restart the application after changing them.
+
+Global, registration, login, refresh-token, and event-registration rate limits use Redis counters, shared across application instances and preserved across application restarts. Each limiter has its own key prefix. Redis is required for rate limiting: requests fail if the store is unavailable rather than bypassing abuse protection.
+
+Successful GET news and event list/detail responses are cached for 60 seconds under `blue-save:v1:cache:*`. Pagination and IDs have separate keys. Event authentication and all input validation still run before cache lookup. Cache failures fall back to the database; errors and private user reports are not cached. News/event changes made by seeders or direct SQL can take up to 60 seconds to appear. Event registrations do not change the cached event fields.
+
+Run the Redis integration check against your local server:
+
+```sh
+node -r ts-node/register tests/redis.cjs
+```
 
 All endpoints are prefixed with `/api/v1`.
 

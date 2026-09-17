@@ -6,6 +6,15 @@ const jwt = require("jsonwebtoken");
 process.env.JWT_SECRET = "test-access-secret";
 process.env.JWT_REFRESH_SECRET = "test-refresh-secret";
 
+// This auth-only check does not need a live Redis server.
+const redisConfig = require.resolve("../src/config/redis");
+require.cache[redisConfig] = {
+  id: redisConfig,
+  filename: redisConfig,
+  loaded: true,
+  exports: { __esModule: true, default: { call: async () => "test-script-sha" } },
+};
+
 let user;
 const tokens = [];
 const repository = require.resolve("../src/repositories/authRepository");
