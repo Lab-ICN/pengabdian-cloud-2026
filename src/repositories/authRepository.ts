@@ -48,10 +48,6 @@ export const getUserRefreshTokens = async (userId: string) => {
   });
 };
 
-export const findUserByGoogleId = async (googleId: string) => {
-  return await prisma.user.findUnique({ where: { googleId } });
-};
-
 export const findUserByResetToken = async (resetToken: string) => {
   const users = await prisma.user.findMany({
     where: { resetTokenExpiresAt: { gt: new Date() } },

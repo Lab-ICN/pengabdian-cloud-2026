@@ -9,7 +9,6 @@ import {
   removeRefreshToken,
   findUserByRefreshToken,
   getUserRefreshTokens,
-  findUserByGoogleId,
   findUserByResetToken,
 } from "../repositories/authRepository";
 import {
@@ -21,74 +20,15 @@ import { sendOTPEmail, sendResetLink } from "../utils/email";
 import HttpError from "../utils/HttpError";
 import { Role } from "../types";
 
-export const authenticateGoogleUser = async (profile: any) => {
-  const email = profile.emails?.[0]?.value!;
-
-  let user = await findUserByGoogleId(profile.id);
-
-  if (!user) {
-    user = await findUserByEmail(email);
-
-    if (user) {
-      console.log("User found with the same email, adding Google ID");
-
-      if (!user.verified) {
-        user = await updateUser(
-          { email },
-          { googleId: profile.id, verified: true }
-        );
-      } else {
-        user = await updateUser({ email }, { googleId: profile.id });
-      }
-    } else {
-      console.log("User not found, creating a new account with Google");
-      user = await createUser({
-        googleId: profile.id,
-        email,
-        name: profile.displayName,
-        role: Role.USER,
-        verified: true,
-      });
-    }
-  }
-
-  const refreshToken = generateRefreshToken(user!.id);
-  await addRefreshToken(user!.id, refreshToken);
-
-  return {
-    user,
-    accessToken: generateAccessToken(user!.id, user!.name, user!.email),
-    refreshToken,
-  };
-};
-
 export const registerUser = async (
   email: string,
   password: string,
   name: string
 ) => {
-  let user = await findUserByEmail(email);
+  const user = await findUserByEmail(email);
 
   if (user) {
-    if (user.googleId && !user.password) {
-      console.log("User has registered with Google, adding password and OTP");
-
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const otp = generateOTP();
-
-      user = await updateUser(
-        { email },
-        {
-          password: hashedPassword,
-          otp,
-          otpExpiresAt: new Date(Date.now() + 5 * 60 * 1000),
-        }
-      );
-
-      return await sendOTPEmail(email, otp);
-    } else {
-      throw new HttpError("Email already registered", 409);
-    }
+    throw new HttpError("Email already registered", 409);
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
