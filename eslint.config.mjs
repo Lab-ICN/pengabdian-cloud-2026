@@ -10,7 +10,7 @@ export default [
       parser: parser,
       sourceType: "module",
     },
-    plugins: [pluginTs],
+    plugins: { "@typescript-eslint": pluginTs },
     rules: {
       ...pluginJs.configs.recommended.rules,
       ...pluginTs.configs.recommended.rules,

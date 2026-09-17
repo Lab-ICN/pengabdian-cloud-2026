@@ -40,9 +40,14 @@ async function main() {
   assert.deepEqual(router.stack.filter((layer) => layer.route).map((layer) => layer.route.path),
     ["/register", "/login", "/refresh-token", "/logout"]);
 
-  const cron = require("node-cron");
+  const cron = require.resolve("node-cron");
   const jobs = [];
-  cron.schedule = (schedule, callback) => jobs.push(callback);
+  require.cache[cron] = {
+    id: cron,
+    filename: cron,
+    loaded: true,
+    exports: { schedule: (schedule, callback) => jobs.push(callback) },
+  };
   const database = require.resolve("../src/config/database");
   require.cache[database] = {
     id: database,
