@@ -1,4 +1,5 @@
 import express from "express";
+import { uploadsDir } from "./config/storage";
 import dotenv from "dotenv";
 import cors from "cors";
 import helmet from "helmet";
@@ -19,6 +20,7 @@ app.use(helmet());
 app.use(morgan("dev"));
 app.use(passport.initialize());
 app.use(express.json());
+app.use("/uploads", express.static(uploadsDir));
 
 app.use("/api/v1", globalLimiter, routes);
 app.use(errorHandler);
