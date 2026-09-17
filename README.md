@@ -8,7 +8,7 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 - **Reports**: Submit and view environmental reports with media uploads.
 - **News**: Browse news articles by category.
 - **Events**: View and register for environmental events.
-- **Donations**: Make donations via Midtrans payment gateway.
+- **Donations**: Dummy payments immediately succeed and record the donation. No real money is charged and no payment gateway is used.
 - **Rate Limiting**: Prevent abuse on sensitive endpoints.
 - **Scheduled Jobs**: Automatic report status updates.
 
@@ -18,7 +18,6 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 - PostgreSQL, Prisma ORM
 - Passport.js (JWT)
 - Local disk storage (user-uploaded report media)
-- Midtrans (payment gateway)
 
 ## Getting Started
 
@@ -26,7 +25,6 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 
 - Node.js & npm
 - PostgreSQL database
-- [Midtrans](https://midtrans.com/) account
 
 ### Installation
 
@@ -51,8 +49,6 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
    DATABASE_URL=your_postgres_url
    JWT_SECRET=your_jwt_secret
    JWT_REFRESH_SECRET=your_jwt_refresh_secret
-   MIDTRANS_SERVER_KEY=your_midtrans_server_key
-   MIDTRANS_CLIENT_KEY=your_midtrans_client_key
    ```
 
 4. **Run database migrations**
@@ -93,7 +89,33 @@ All endpoints are prefixed with `/api/v1`.
 - `GET /events/:eventId` - Get event by ID (requires authentication)
 - `POST /events/register/:eventId` - Register for event (requires authentication)
 
-- `POST /donation` - Create a donation (requires authentication)
-- `POST /donation/webhook` - Midtrans webhook
+- `POST /donation` - Record a successful dummy donation (requires authentication)
+
+### Dummy donations
+
+Send `POST /api/v1/donation` with a bearer access token and a JSON body:
+
+```json
+{ "amount": 10000 }
+```
+
+The amount must be positive, have at most two decimal places, and be between `0.01` and `99999999.99`. Phone numbers are not required and no additional fee is added.
+
+Successful requests return HTTP 200 after saving the donation:
+
+```json
+{
+  "message": "Donation successful",
+  "transaction": {
+    "id": "donation-id",
+    "orderId": "ORDER-generated-uuid",
+    "amount": 10000,
+    "status": "success",
+    "dummy": true
+  }
+}
+```
+
+There is no checkout token, redirect URL, or webhook. Clients should display success directly. Authentication, validation, and database errors still return errors.
 
 ---
