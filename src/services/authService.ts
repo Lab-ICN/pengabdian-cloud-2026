@@ -1,22 +1,17 @@
 import bcrypt from "bcrypt";
-import crypto from "crypto";
 import jwt from "jsonwebtoken";
 import {
   findUserByEmail,
   createUser,
-  updateUser,
   addRefreshToken,
   removeRefreshToken,
   findUserByRefreshToken,
   getUserRefreshTokens,
-  findUserByResetToken,
 } from "../repositories/authRepository";
 import {
   generateAccessToken,
   generateRefreshToken,
-  generateOTP,
 } from "../utils/jwt";
-import { sendOTPEmail, sendResetLink } from "../utils/email";
 import HttpError from "../utils/HttpError";
 import { Role } from "../types";
 
@@ -32,47 +27,14 @@ export const registerUser = async (
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const otp = generateOTP();
-
-  user = await createUser({
+  await createUser({
     email,
     password: hashedPassword,
     name,
-    otp,
-    otpExpiresAt: new Date(Date.now() + 5 * 60 * 1000),
     role: Role.USER,
   });
 
-  await sendOTPEmail(email, otp);
-};
-
-export const verifyOTP = async (email: string, otp: string) => {
-  const user = await findUserByEmail(email);
-  if (!user) throw new HttpError("User not found", 404);
-  if (
-    !user.otp ||
-    user.otp !== otp ||
-    Date.now() > user.otpExpiresAt!.getTime()
-  ) {
-    throw new HttpError("Invalid or expired OTP", 400);
-  }
-
-  const refreshToken = generateRefreshToken(user.id);
-  await addRefreshToken(user.id, refreshToken);
-
-  await updateUser(
-    { email },
-    {
-      otp: null,
-      otpExpiresAt: null,
-      verified: true,
-    }
-  );
-
-  return {
-    accessToken: generateAccessToken(user.id, user.name, user.email),
-    refreshToken,
-  };
+  return loginUser(email, password);
 };
 
 export const loginUser = async (
@@ -83,7 +45,6 @@ export const loginUser = async (
   const user = await findUserByEmail(email);
   if (!user || !(await bcrypt.compare(password, user.password as string)))
     throw new HttpError("Incorrect email or password", 401);
-  if (!user.verified) throw new HttpError("Account not verified", 403);
 
   const refreshToken = generateRefreshToken(user.id, rememberMe);
 
@@ -126,41 +87,4 @@ export const logoutUser = async (refreshToken: string) => {
   if (!user) throw new HttpError("Invalid refresh token", 403);
 
   await removeRefreshToken(refreshToken);
-};
-
-export const requestPasswordReset = async (email: string) => {
-  const user = await findUserByEmail(email);
-  if (!user) throw new HttpError("User not found", 404);
-
-  const resetToken = crypto.randomBytes(32).toString("hex");
-  const hashedResetToken = await bcrypt.hash(resetToken, 10);
-  const expiry = new Date(Date.now() + 60 * 60 * 1000);
-
-  await updateUser(
-    { email },
-    { resetToken: hashedResetToken, resetTokenExpiresAt: expiry }
-  );
-
-  await sendResetLink(email, resetToken);
-};
-
-export const resetPassword = async (
-  resetToken: string,
-  newPassword: string
-) => {
-  const user = await findUserByResetToken(resetToken);
-
-  if (
-    !user ||
-    !user.resetToken ||
-    !user.resetTokenExpiresAt ||
-    user.resetTokenExpiresAt.getTime() < Date.now()
-  )
-    throw new HttpError("Invalid or expired reset token", 403);
-
-  const hashedPassword = await bcrypt.hash(newPassword, 10);
-  await updateUser(
-    { id: user.id },
-    { password: hashedPassword, resetToken: null, resetTokenExpiresAt: null }
-  );
 };
