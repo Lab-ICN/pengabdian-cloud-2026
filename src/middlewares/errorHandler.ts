@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { MulterError } from "multer";
 
 export const errorHandler = (
   err: any,
@@ -6,8 +7,11 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  const statusCode = err.statusCode || 500;
+  const statusCode = err instanceof MulterError
+    ? (err.code === "LIMIT_FILE_SIZE" ? 413 : 400)
+    : err.statusCode || err.status || 500;
+  if (statusCode >= 500) console.error(err);
   res
     .status(statusCode)
-    .json({ message: err.message || "Internal Server Error" });
+    .json({ message: statusCode >= 500 ? "Internal Server Error" : err.message });
 };

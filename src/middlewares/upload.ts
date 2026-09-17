@@ -3,6 +3,7 @@ import multer, { FileFilterCallback } from "multer";
 import path from "path";
 import { Request } from "express";
 import { reportUploadsDir } from "../config/storage";
+import HttpError from "../utils/HttpError";
 
 const storage = multer.diskStorage({
   destination: reportUploadsDir,
@@ -41,11 +42,11 @@ const fileFilter = (
   const isAllowedMimeType = allowedMimeTypes.includes(file.mimetype);
 
   if (!isAllowedExtension) {
-    return cb(new Error("Invalid file extension"));
+    return cb(new HttpError("Invalid file extension", 400));
   }
 
   if (!isAllowedMimeType) {
-    return cb(new Error("Invalid MIME type"));
+    return cb(new HttpError("Invalid MIME type", 400));
   }
 
   cb(null, true);
