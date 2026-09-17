@@ -60,6 +60,7 @@ export const loginValidation = checkSchema({
     isBoolean: {
       errorMessage: "Remember me must be a boolean",
     },
+    toBoolean: true,
   },
 });
 

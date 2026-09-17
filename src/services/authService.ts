@@ -7,6 +7,7 @@ import {
   removeRefreshToken,
   findUserByRefreshToken,
   getUserRefreshTokens,
+  rotateRefreshToken,
 } from "../repositories/authRepository";
 import {
   generateAccessToken,
@@ -43,7 +44,7 @@ export const loginUser = async (
   rememberMe: boolean = false
 ) => {
   const user = await findUserByEmail(email);
-  if (!user || !(await bcrypt.compare(password, user.password as string)))
+  if (!user || !user.password || !(await bcrypt.compare(password, user.password)))
     throw new HttpError("Incorrect email or password", 401);
 
   const refreshToken = generateRefreshToken(user.id, rememberMe);
@@ -66,20 +67,26 @@ export const refreshAccessToken = async (refreshToken: string) => {
 
   if (!user) throw new HttpError("Invalid refresh token", 403);
 
+  let payload: jwt.JwtPayload | string;
   try {
-    jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!);
-
-    const newRefreshToken = generateRefreshToken(user.id);
-    await removeRefreshToken(refreshToken);
-    await addRefreshToken(user.id, newRefreshToken);
-
-    return {
-      accessToken: generateAccessToken(user.id, user.name, user.email),
-      refreshToken: newRefreshToken,
-    };
+    payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!);
   } catch (err) {
     throw new HttpError("Invalid or expired refresh token", 403);
   }
+  if (typeof payload === "string" || payload.id !== user.id) {
+    throw new HttpError("Invalid refresh token", 403);
+  }
+
+  const rememberMe = typeof payload.exp === "number" &&
+    typeof payload.iat === "number" && payload.exp - payload.iat > 7 * 86400;
+  const newRefreshToken = generateRefreshToken(user.id, rememberMe);
+  if (!(await rotateRefreshToken(user.id, refreshToken, newRefreshToken))) {
+    throw new HttpError("Invalid refresh token", 403);
+  }
+  return {
+    accessToken: generateAccessToken(user.id, user.name, user.email),
+    refreshToken: newRefreshToken,
+  };
 };
 
 export const logoutUser = async (refreshToken: string) => {

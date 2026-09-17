@@ -16,7 +16,8 @@ export const register = async (
     const { email, password } = matchedData(req);
     const name = email
       .substring(0, email.indexOf("@"))
-      .replace(/^./, (c: string) => c.toUpperCase());
+      .replace(/^./, (c: string) => c.toUpperCase())
+      .slice(0, 50);
     const { accessToken, refreshToken } = await registerUser(email, password, name);
     res.status(201).json({
       message: "Registration successful",
