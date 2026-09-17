@@ -12,12 +12,15 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 - **Rate Limiting**: Prevent abuse on sensitive endpoints.
 - **Scheduled Jobs**: Automatic report status updates.
 
+The application does not require external service accounts, APIs, CDNs, or hosted storage. Authentication, dummy payments, uploads, and sample images run locally with your MySQL database. npm libraries remain dependencies installed during setup.
+
 ## Tech Stack
 
 - Node.js, Express, TypeScript
 - MySQL, Prisma ORM
 - Passport.js (JWT)
 - Local disk storage (user-uploaded report media)
+- Bundled local sample image at `/images/placeholder.svg`
 
 ## Getting Started
 
@@ -28,11 +31,10 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 
 ### Installation
 
-1. **Clone the repository**
+1. **Open the project directory**
 
    ```sh
-   git clone https://github.com/your-username/blue-save-be.git
-   cd blue-save-be
+   cd /path/to/blue-save-be
    ```
 
 2. **Install dependencies**
@@ -63,6 +65,8 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
    ```
 
    The active migrations target a new, empty MySQL database. Previous PostgreSQL migrations are archived in `prisma/postgresql-migrations` and are not executed. Existing PostgreSQL records are not automatically transferred; keep that database and its backups if its data is needed.
+
+   The local-media migration replaces absolute HTTP(S) and protocol-relative report, news, and event image links with the bundled placeholder. Back up existing data before applying it if you need to retain the original links. Local upload paths are preserved. Any data imported after migration must also use local media paths.
 
 5. **Seed the database (optional)**
 
