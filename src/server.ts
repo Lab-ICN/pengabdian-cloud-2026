@@ -21,6 +21,7 @@ app.use(morgan("dev"));
 app.use(passport.initialize());
 app.use(express.json());
 app.use("/uploads", express.static(uploadsDir));
+app.use("/images", express.static("public/images"));
 
 app.use("/api/v1", globalLimiter, routes);
 app.use(errorHandler);
