@@ -1,10 +1,8 @@
 import { Router } from "express";
-import passport from "passport";
 import {
   register,
   verify,
   login,
-  googleAuthCallback,
   refreshTokenHandler,
   logout,
   forgotPassword,
@@ -53,17 +51,6 @@ router.post(
   loginValidation,
   validationResultHandler,
   login
-);
-
-router.get(
-  "/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
-);
-
-router.get(
-  "/google/callback",
-  passport.authenticate("google", { session: false }),
-  googleAuthCallback
 );
 
 router.post(

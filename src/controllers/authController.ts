@@ -67,30 +67,6 @@ export const login = async (
   }
 };
 
-export const googleAuthCallback = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    if (!req.user) {
-      res.status(401).json({ message: "Google login failed" });
-      return;
-    }
-
-    const { accessToken, refreshToken } = req.user as any;
-    const redirectUrl = process.env.REDIRECT_URL;
-
-    const fullRedirectUrl = `${redirectUrl}?accessToken=${encodeURIComponent(
-      accessToken
-    )}&refreshToken=${encodeURIComponent(refreshToken)}`;
-
-    res.redirect(fullRedirectUrl);
-  } catch (err) {
-    next(err);
-  }
-};
-
 export const refreshTokenHandler = async (
   req: Request,
   res: Response,
