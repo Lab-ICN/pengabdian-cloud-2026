@@ -6,8 +6,7 @@ const prisma = new PrismaClient();
 async function main() {
   const newsData = [
     {
-      image:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/news/conservation.jpeg",
+      image: "/images/placeholder.svg",
       title: "The Devastating Effects of Ocean Plastic Pollution",
       description:
         "How plastic waste is endangering marine life and ecosystems.",
@@ -17,8 +16,7 @@ async function main() {
       category: Category.ENVIRONMENT,
     },
     {
-      image:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/news/conservation.jpeg",
+      image: "/images/placeholder.svg",
       title: "Volunteers Unite to Clean Up Coastal Areas",
       description:
         "Community-driven efforts to remove plastic waste from beaches and oceans.",
@@ -28,8 +26,7 @@ async function main() {
       category: Category.CONSERVATION,
     },
     {
-      image:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/news/conservation.jpeg",
+      image: "/images/placeholder.svg",
       title: "Protecting Coral Reefs: A Global Conservation Mission",
       description:
         "Efforts to restore and safeguard coral reefs against climate change and pollution.",
@@ -39,8 +36,7 @@ async function main() {
       category: Category.CONSERVATION,
     },
     {
-      image:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/news/conservation.jpeg",
+      image: "/images/placeholder.svg",
       title: "Innovative Technologies for Ocean Cleanup",
       description:
         "How science and technology are revolutionizing the fight against marine pollution.",
