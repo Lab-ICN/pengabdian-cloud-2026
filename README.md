@@ -4,7 +4,7 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 
 ## Features
 
-- **User Authentication**: Register, login, Google OAuth, OTP verification, password reset.
+- **User Authentication**: Register, login, OTP verification, password reset.
 - **Reports**: Submit and view environmental reports with media uploads.
 - **News**: Browse news articles by category.
 - **Events**: View and register for environmental events.
@@ -16,7 +16,7 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 
 - Node.js, Express, TypeScript
 - PostgreSQL, Prisma ORM
-- Passport.js (JWT & Google OAuth)
+- Passport.js (JWT)
 - Supabase (media storage)
 - Midtrans (payment gateway)
 - Nodemailer (email service)
@@ -29,7 +29,6 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 - PostgreSQL database
 - [Midtrans](https://midtrans.com/) account
 - [Supabase](https://supabase.com/) project
-- Google OAuth credentials
 
 ### Installation
 
@@ -56,15 +55,11 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
    JWT_REFRESH_SECRET=your_jwt_refresh_secret
    EMAIL_USER=your_email@gmail.com
    EMAIL_PASS=your_email_password
-   GOOGLE_CLIENT_ID=your_google_client_id
-   GOOGLE_CLIENT_SECRET=your_google_client_secret
-   GOOGLE_CALLBACK_URL=your_google_callback_url
    MIDTRANS_SERVER_KEY=your_midtrans_server_key
    MIDTRANS_CLIENT_KEY=your_midtrans_client_key
    SUPABASE_URL=your_supabase_url
    SUPABASE_ANON_KEY=your_supabase_anon_key
    RESET_PASSWORD_URL=https://your-frontend/reset-password
-   REDIRECT_URL=https://your-frontend/auth/callback
    ```
 
 4. **Run database migrations**
@@ -93,7 +88,6 @@ All endpoints are prefixed with `/api/v1`.
 - `POST /auth/register` - Register a new user
 - `POST /auth/verify-otp` - Verify OTP
 - `POST /auth/login` - Login
-- `GET /auth/google` - Google OAuth login
 - `POST /auth/refresh-token` - Refresh JWT token
 - `POST /auth/logout` - Logout
 - `POST /auth/forgot-password` - Request password reset
