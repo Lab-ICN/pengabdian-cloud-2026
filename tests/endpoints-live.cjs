@@ -29,11 +29,12 @@ async function stop() {
   }
 }
 async function start() {
+  // Redis preserves limits across restarts; use a fresh test client each phase.
+  localAddress = `127.${1 + parseInt(tag.slice(0, 2), 16) % 250}.${parseInt(tag.slice(2, 4), 16)}.${++clientGroup}`;
   if (externalBase) {
     assert.equal(new URL(externalBase).hostname, '127.0.0.1', 'External mode requires a local IPv4 server');
     base = externalBase;
     // Separate loopback clients test per-IP limits without blocking the user's IP.
-    localAddress = `127.${1 + parseInt(tag.slice(0, 2), 16) % 250}.${parseInt(tag.slice(2, 4), 16)}.${++clientGroup}`;
     console.log(`Target ${base}; test client ${localAddress}`);
     return;
   }
@@ -67,27 +68,21 @@ async function request(method, route, body, token, raw = false) {
     method, headers, body: body === undefined ? undefined : body instanceof FormData || raw ? body : JSON.stringify(body),
     signal: AbortSignal.timeout(10000),
   };
-  let response, text;
-  if (externalBase) {
-    const prepared = new Request(base + route, options);
-    const bytes = Buffer.from(await prepared.arrayBuffer());
-    const wireHeaders = Object.fromEntries(prepared.headers);
-    if (bytes.length) wireHeaders['content-length'] = String(bytes.length);
-    response = await new Promise((resolve, reject) => {
-      const req = http.request(prepared.url, { method, headers: wireHeaders, localAddress, signal: options.signal }, res => {
-        const chunks = [];
-        res.on('data', chunk => chunks.push(chunk));
-        res.on('error', reject);
-        res.on('end', () => resolve({ status: res.statusCode, text: Buffer.concat(chunks).toString() }));
-      });
-      req.on('error', reject);
-      req.end(bytes);
+  const prepared = new Request(base + route, options);
+  const bytes = Buffer.from(await prepared.arrayBuffer());
+  const wireHeaders = Object.fromEntries(prepared.headers);
+  if (bytes.length) wireHeaders['content-length'] = String(bytes.length);
+  const response = await new Promise((resolve, reject) => {
+    const req = http.request(prepared.url, { method, headers: wireHeaders, localAddress, signal: options.signal }, res => {
+      const chunks = [];
+      res.on('data', chunk => chunks.push(chunk));
+      res.on('error', reject);
+      res.on('end', () => resolve({ status: res.statusCode, text: Buffer.concat(chunks).toString() }));
     });
-    text = response.text;
-  } else {
-    response = await fetch(base + route, options);
-    text = await response.text();
-  }
+    req.on('error', reject);
+    req.end(bytes);
+  });
+  const text = response.text;
   let data; try { data = JSON.parse(text); } catch { data = text; }
   return { status: response.status, data };
 }
