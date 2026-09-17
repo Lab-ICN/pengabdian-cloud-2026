@@ -12,7 +12,6 @@ model User {
   email               String              @unique @db.VarChar(320)
   password            String?             @db.VarChar(255)
   name                String              @db.VarChar(50)
-  googleId            String?             @unique @db.VarChar(255)
   otp                 String?             @db.Char(6)
   otpExpiresAt        DateTime?
   role                Role                @default(USER)
