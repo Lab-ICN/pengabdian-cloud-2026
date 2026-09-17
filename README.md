@@ -1,6 +1,6 @@
 # Blue Save (Nautikara) Backend
 
-This is the backend API for Blue Save (Nautikara), an environmental platform for reporting, news, events, and donations. Built with Node.js, TypeScript, Express, Prisma, and PostgreSQL.
+This is the backend API for Blue Save (Nautikara), an environmental platform for reporting, news, events, and donations. Built with Node.js, TypeScript, Express, Prisma, and MySQL.
 
 ## Features
 
@@ -15,7 +15,7 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 ## Tech Stack
 
 - Node.js, Express, TypeScript
-- PostgreSQL, Prisma ORM
+- MySQL, Prisma ORM
 - Passport.js (JWT)
 - Local disk storage (user-uploaded report media)
 
@@ -24,7 +24,7 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 ### Prerequisites
 
 - Node.js & npm
-- PostgreSQL database
+- MySQL 8.0+ database and an application user with access to it
 
 ### Installation
 
@@ -43,19 +43,26 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 
 3. **Set up environment variables**
 
-   Create a `.env` file in the root directory and configure:
+   Copy `.env.example` to `.env` and configure the MySQL connection and JWT secrets:
 
    ```
-   DATABASE_URL=your_postgres_url
+   DATABASE_URL="mysql://blue_save:your_password@127.0.0.1:3306/blue_save"
    JWT_SECRET=your_jwt_secret
    JWT_REFRESH_SECRET=your_jwt_refresh_secret
    ```
 
-4. **Run database migrations**
+4. **Create the database and run migrations**
 
    ```sh
+   # Create an empty MySQL database (run as a database administrator):
+   mysql -u root -p -e "CREATE DATABASE blue_save CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+
+   # Grant your application user access to blue_save, then run:
    npx prisma migrate deploy
+   npx prisma generate
    ```
+
+   The active migrations target a new, empty MySQL database. Previous PostgreSQL migrations are archived in `prisma/postgresql-migrations` and are not executed. Existing PostgreSQL records are not automatically transferred; keep that database and its backups if its data is needed.
 
 5. **Seed the database (optional)**
 
