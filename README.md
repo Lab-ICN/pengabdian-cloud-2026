@@ -14,6 +14,8 @@ This is the backend API for Blue Save (Nautikara), an environmental platform for
 
 The application does not require external service accounts, APIs, CDNs, or hosted storage. Authentication, dummy payments, uploads, and sample images run locally with your MySQL database. npm libraries remain dependencies installed during setup.
 
+Prisma 6 is retained for compatibility. A scoped npm override upgrades its `deepmerge-ts` dependency to patched version 8; remove the override when Prisma's own dependency is patched. Prisma CLI configuration and the seed command are defined in `prisma.config.ts`.
+
 ## Tech Stack
 
 - Node.js, Express, TypeScript
@@ -26,7 +28,7 @@ The application does not require external service accounts, APIs, CDNs, or hoste
 
 ### Prerequisites
 
-- Node.js & npm
+- Node.js 22 LTS (22.13+) or 24+, and npm
 - MySQL 8.0+ database and an application user with access to it
 
 ### Installation
