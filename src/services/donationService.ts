@@ -1,27 +1,21 @@
-import snap from "../config/midtrans";
 import { randomUUID } from "crypto";
-import HttpError from "../utils/HttpError";
+import { createDonation } from "../repositories/donationRepository";
 
 export const createTransaction = async (
   amount: number,
-  customerDetails: any,
   userId: string
 ) => {
-  try {
-    const orderId = `ORDER-${randomUUID()}`;
+  const donation = await createDonation({
+    orderId: `ORDER-${randomUUID()}`,
+    amount,
+    userId,
+  });
 
-    const parameter = {
-      transaction_details: {
-        order_id: orderId,
-        gross_amount: amount,
-      },
-      customer_details: customerDetails,
-      custom_field1: userId,
-    };
-
-    const transaction = await snap.createTransaction(parameter);
-    return transaction;
-  } catch {
-    throw new HttpError("Failed to create payment", 500);
-  }
+  return {
+    id: donation.id,
+    orderId: donation.orderId,
+    amount: Number(donation.amount),
+    status: "success",
+    dummy: true,
+  };
 };

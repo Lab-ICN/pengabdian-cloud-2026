@@ -5,8 +5,7 @@ const prisma = new PrismaClient();
 async function main() {
   const events = [
     {
-      image:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/events/coral_conser.jpg",
+      image: "/images/placeholder.svg",
       title: "Coastal Cleanup Day",
       description:
         "Join us in removing plastic waste and debris from our shores!",
@@ -14,8 +13,7 @@ async function main() {
       location: "Bali, Indonesia",
     },
     {
-      image:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/events/coral_conser.jpg",
+      image: "/images/placeholder.svg",
       title: "Coral Reef Restoration",
       description:
         "Help restore damaged coral reefs and protect marine biodiversity.",
@@ -23,8 +21,7 @@ async function main() {
       location: "Raja Ampat, Indonesia",
     },
     {
-      image:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/events/coral_conser.jpg",
+      image: "/images/placeholder.svg",
       title: "Marine Wildlife Protection Talk",
       description:
         "Learn about marine conservation and efforts to protect sea life.",
@@ -32,8 +29,7 @@ async function main() {
       location: "Jakarta, Indonesia",
     },
     {
-      image:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/events/coral_conser.jpg",
+      image: "/images/placeholder.svg",
       title: "Sustainable Fishing Workshop",
       description:
         "A workshop on sustainable fishing practices to protect ocean life.",
@@ -41,8 +37,7 @@ async function main() {
       location: "Surabaya, Indonesia",
     },
     {
-      image:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/events/coral_conser.jpg",
+      image: "/images/placeholder.svg",
       title: "Beach Waste Art Exhibition",
       description:
         "An exhibition showcasing creative artworks made from beach waste.",

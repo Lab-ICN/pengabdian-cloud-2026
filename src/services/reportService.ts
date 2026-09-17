@@ -1,5 +1,4 @@
-import { supabase } from "../config/supabase";
-import { Readable } from "stream";
+import { unlink } from "fs/promises";
 import {
   createReport,
   findReportsByUserId,
@@ -20,45 +19,25 @@ export const createNewReport = async (
     throw new HttpError("File is required", 400);
   }
 
-  const fileStream = Readable.from(file.buffer);
+  try {
+    const report = await createReport({
+      title,
+      street,
+      province,
+      country,
+      description,
+      media: `/uploads/reports/${file.filename}`,
+      userId,
+    });
 
-  const { data, error } = await supabase.storage
-    .from("media")
-    .upload(
-      `reports/${userId}/${Date.now()}_${Math.random()
-        .toString(36)
-        .substring(2)}_${file.originalname}`,
-      fileStream,
-      {
-        cacheControl: "3600",
-        contentType: file.mimetype,
-        upsert: false,
-        duplex: "half",
-      }
-    );
-
-  if (error) {
-    throw new HttpError(error.message, 500);
+    return {
+      ...report,
+      createdAt: formatDateWithoutYear(new Date(report.createdAt)),
+    };
+  } catch (err) {
+    await unlink(file.path).catch(() => undefined);
+    throw err;
   }
-
-  const mediaUrl = `${
-    supabase.storage.from("media").getPublicUrl(data.path).data.publicUrl
-  }`;
-
-  const report = await createReport({
-    title,
-    street,
-    province,
-    country,
-    description,
-    media: mediaUrl,
-    userId,
-  });
-
-  return {
-    ...report,
-    createdAt: formatDateWithoutYear(new Date(report.createdAt)),
-  };
 };
 
 export const fetchReportsByUserId = async (userId: string) => {

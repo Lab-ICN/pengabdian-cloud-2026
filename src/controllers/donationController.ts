@@ -8,22 +8,9 @@ export const createPayment = async (
   next: NextFunction
 ) => {
   try {
-    const { amount, phone } = matchedData(req);
-    const { id: userId, name, email } = (req as any).user;
-
-    const customerDetails = {
-      first_name: name,
-      email,
-      phone,
-    };
-
-    const trueAmount = amount * 1.01;
-
-    const transaction = await createTransaction(
-      trueAmount,
-      customerDetails,
-      userId
-    );
+    const { amount } = matchedData(req);
+    const { id: userId } = (req as any).user;
+    const transaction = await createTransaction(amount, userId);
 
     res.status(200).json({
       message: "Donation successful",

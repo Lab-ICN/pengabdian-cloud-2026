@@ -1,12 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import {
   registerUser,
-  verifyOTP,
   loginUser,
   refreshAccessToken,
   logoutUser,
-  requestPasswordReset,
-  resetPassword,
 } from "../services/authService";
 import { matchedData } from "express-validator/lib";
 
@@ -19,24 +16,11 @@ export const register = async (
     const { email, password } = matchedData(req);
     const name = email
       .substring(0, email.indexOf("@"))
-      .replace(/^./, (c: string) => c.toUpperCase());
-    await registerUser(email, password, name);
-    res.status(201).json({ message: "OTP has been sent to email" });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const verify = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email, otp } = matchedData(req);
-    const { accessToken, refreshToken } = await verifyOTP(email, otp);
-    res.status(200).json({
-      message: "Verification successful",
+      .replace(/^./, (c: string) => c.toUpperCase())
+      .slice(0, 50);
+    const { accessToken, refreshToken } = await registerUser(email, password, name);
+    res.status(201).json({
+      message: "Registration successful",
       accessToken,
       refreshToken,
     });
@@ -62,30 +46,6 @@ export const login = async (
       accessToken,
       refreshToken,
     });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const googleAuthCallback = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    if (!req.user) {
-      res.status(401).json({ message: "Google login failed" });
-      return;
-    }
-
-    const { accessToken, refreshToken } = req.user as any;
-    const redirectUrl = process.env.REDIRECT_URL;
-
-    const fullRedirectUrl = `${redirectUrl}?accessToken=${encodeURIComponent(
-      accessToken
-    )}&refreshToken=${encodeURIComponent(refreshToken)}`;
-
-    res.redirect(fullRedirectUrl);
   } catch (err) {
     next(err);
   }
@@ -119,36 +79,6 @@ export const logout = async (
     await logoutUser(refreshToken);
 
     res.status(200).json({ message: "Logout successful" });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const forgotPassword = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { email } = matchedData(req);
-    await requestPasswordReset(email);
-    res
-      .status(200)
-      .json({ message: "Password reset link has been sent to email" });
-  } catch (err) {
-    next(err);
-  }
-};
-
-export const resetPasswordHandler = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { resetToken, newPassword } = matchedData(req);
-    await resetPassword(resetToken, newPassword);
-    res.status(200).json({ message: "Password has been updated successfully" });
   } catch (err) {
     next(err);
   }

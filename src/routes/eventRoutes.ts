@@ -11,6 +11,7 @@ import {
 } from "../validators/eventValidator";
 import { validationResultHandler } from "../middlewares/validationResultHandler";
 import { eventRegisterLimiter } from "../middlewares/rateLimiter";
+import { responseCache } from "../middlewares/responseCache";
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   getAllEventsValidator,
   validationResultHandler,
+  responseCache("events-list"),
   getAllEvents
 );
 
@@ -27,6 +29,7 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   getEventAndRegisterEventValidator,
   validationResultHandler,
+  responseCache("events-detail"),
   getEventById
 );
 

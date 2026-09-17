@@ -11,8 +11,7 @@ async function main() {
       province: "East Java",
       country: "Indonesia",
       description: "Ocean Trash Trash Trash",
-      media:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/reports/8a01f8cb-3598-469b-9c70-cc68b4d75c11/1741855541586_u49lafq81ml_ocean_trash.jpg",
+      media: "/images/placeholder.svg",
       status: ReportStatus.WAITING,
       userId: "8a01f8cb-3598-469b-9c70-cc68b4d75c11",
     },
@@ -22,8 +21,7 @@ async function main() {
       province: "East Java",
       country: "Indonesia",
       description: "Ocean Trash Trash Trash",
-      media:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/reports/8a01f8cb-3598-469b-9c70-cc68b4d75c11/1741855541586_u49lafq81ml_ocean_trash.jpg",
+      media: "/images/placeholder.svg",
       status: ReportStatus.VERIFIED,
       userId: "8a01f8cb-3598-469b-9c70-cc68b4d75c11",
     },
@@ -33,8 +31,7 @@ async function main() {
       province: "East Java",
       country: "Indonesia",
       description: "Ocean Trash Trash Trash",
-      media:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/reports/8a01f8cb-3598-469b-9c70-cc68b4d75c11/1741855541586_u49lafq81ml_ocean_trash.jpg",
+      media: "/images/placeholder.svg",
       status: ReportStatus.INVALID,
       userId: "8a01f8cb-3598-469b-9c70-cc68b4d75c11",
     },
@@ -44,8 +41,7 @@ async function main() {
       province: "East Java",
       country: "Indonesia",
       description: "Ocean Trash Trash Trash",
-      media:
-        "https://qdtfpohyfsqvunddzoge.supabase.co/storage/v1/object/public/media/reports/8a01f8cb-3598-469b-9c70-cc68b4d75c11/1741855541586_u49lafq81ml_ocean_trash.jpg",
+      media: "/images/placeholder.svg",
       status: ReportStatus.RESOLVED,
       userId: "8a01f8cb-3598-469b-9c70-cc68b4d75c11",
     },

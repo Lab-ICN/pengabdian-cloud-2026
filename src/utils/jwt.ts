@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { randomUUID } from "crypto";
 
 export const generateAccessToken = (
   userId: string,
@@ -17,9 +18,6 @@ export const generateRefreshToken = (
   const expiresIn = rememberMe ? "30d" : "7d";
   return jwt.sign({ id: userId }, process.env.JWT_REFRESH_SECRET!, {
     expiresIn,
+    jwtid: randomUUID(),
   });
-};
-
-export const generateOTP = () => {
-  return Math.floor(100000 + Math.random() * 900000).toString();
 };

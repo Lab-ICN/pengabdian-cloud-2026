@@ -1,5 +1,4 @@
 import prisma from "../config/database";
-import bcrypt from "bcrypt";
 
 export const findUserByEmail = async (email: string) => {
   return await prisma.user.findUnique({ where: { email } });
@@ -7,16 +6,6 @@ export const findUserByEmail = async (email: string) => {
 
 export const createUser = async (data: any) => {
   return await prisma.user.create({ data });
-};
-
-export const updateUser = async (
-  identifier: { id?: string; email?: string },
-  data: any
-) => {
-  return await prisma.user.update({
-    where: identifier.id ? { id: identifier.id } : { email: identifier.email },
-    data,
-  });
 };
 
 export const addRefreshToken = async (userId: string, token: string) => {
@@ -34,6 +23,21 @@ export const removeRefreshToken = async (token: string) => {
   });
 };
 
+export const rotateRefreshToken = async (
+  userId: string,
+  oldToken: string,
+  newToken: string
+) => {
+  return prisma.$transaction(async (tx) => {
+    const removed = await tx.refreshToken.deleteMany({
+      where: { token: oldToken, userId },
+    });
+    if (removed.count === 0) return false;
+    await tx.refreshToken.create({ data: { userId, token: newToken } });
+    return true;
+  });
+};
+
 export const findUserByRefreshToken = async (refreshToken: string) => {
   const refreshTokenRecord = await prisma.refreshToken.findFirst({
     where: { token: refreshToken },
@@ -45,22 +49,6 @@ export const findUserByRefreshToken = async (refreshToken: string) => {
 export const getUserRefreshTokens = async (userId: string) => {
   return await prisma.refreshToken.findMany({
     where: { userId },
+    orderBy: { createdAt: "asc" },
   });
-};
-
-export const findUserByGoogleId = async (googleId: string) => {
-  return await prisma.user.findUnique({ where: { googleId } });
-};
-
-export const findUserByResetToken = async (resetToken: string) => {
-  const users = await prisma.user.findMany({
-    where: { resetTokenExpiresAt: { gt: new Date() } },
-  });
-
-  for (const user of users) {
-    if (user.resetToken && (await bcrypt.compare(resetToken, user.resetToken)))
-      return user;
-  }
-
-  return null;
 };

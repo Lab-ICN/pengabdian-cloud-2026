@@ -10,8 +10,8 @@ export const createReportValidation = checkSchema({
       errorMessage: "Title is required",
     },
     isLength: {
-      options: { min: 5 },
-      errorMessage: "Title must be at least 5 characters long",
+      options: { min: 5, max: 255 },
+      errorMessage: "Title must be between 5 and 255 characters long",
     },
   },
   street: {
@@ -23,8 +23,8 @@ export const createReportValidation = checkSchema({
       errorMessage: "Street is required",
     },
     isLength: {
-      options: { min: 5 },
-      errorMessage: "Street must be at least 5 characters long",
+      options: { min: 5, max: 255 },
+      errorMessage: "Street must be between 5 and 255 characters long",
     },
   },
   province: {
@@ -36,8 +36,8 @@ export const createReportValidation = checkSchema({
       errorMessage: "Province is required",
     },
     isLength: {
-      options: { min: 3 },
-      errorMessage: "Province must be at least 3 characters long",
+      options: { min: 3, max: 255 },
+      errorMessage: "Province must be between 3 and 255 characters long",
     },
   },
   country: {
@@ -49,8 +49,8 @@ export const createReportValidation = checkSchema({
       errorMessage: "Country is required",
     },
     isLength: {
-      options: { min: 5 },
-      errorMessage: "Country must be at least 5 characters long",
+      options: { min: 5, max: 255 },
+      errorMessage: "Country must be between 5 and 255 characters long",
     },
   },
   description: {
