@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { Category } from "../../src/types";
-
-const prisma = new PrismaClient();
+import prisma from "../../src/config/database";
 
 async function main() {
   const newsData = [
