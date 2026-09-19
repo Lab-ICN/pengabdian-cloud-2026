@@ -51,7 +51,11 @@ Prisma 6 is retained for compatibility. A scoped npm override upgrades its `deep
    Copy `.env.example` to `.env` and configure the MySQL connection and JWT secrets:
 
    ```
-   DATABASE_URL="mysql://blue_save:your_password@127.0.0.1:3306/blue_save"
+   DB_HOST=127.0.0.1
+   DB_USER=blue_save
+   DB_PASSWORD=your_password
+   DB_NAME=blue_save
+   DB_PORT=3306
    JWT_SECRET=your_jwt_secret
    JWT_REFRESH_SECRET=your_jwt_refresh_secret
    REDIS_HOST=127.0.0.1
