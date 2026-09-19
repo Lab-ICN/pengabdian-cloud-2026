@@ -106,6 +106,8 @@ node -r ts-node/register tests/redis.cjs
 
 All endpoints are prefixed with `/api/v1`.
 
+- `GET /health` - Check API availability
+
 - `POST /auth/register` - Register a new user and receive access and refresh tokens
 - `POST /auth/login` - Login
 - `POST /auth/refresh-token` - Refresh JWT token
